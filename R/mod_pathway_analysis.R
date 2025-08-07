@@ -116,10 +116,15 @@ mod_pathway_analysis <- function(input, output, session, filtered_data_rv, res_r
       showNotification("No enriched KEGG pathways found.", type = "warning")
     }
     result_df <- as.data.frame(pathway_result@result)
-    print("Columns in result_df:")
-    print(colnames(result_df))
-    print("Preview of result_df:")
-    print(head(result_df))
+    #print("Columns in result_df:")
+    #print(colnames(result_df))
+    #print("Preview of result_df:")
+    #print(head(result_df))
+    print(class(pathway_result))
+    print(slotNames(pathway_result))
+    print("Term IDs:")
+    print(head(pathway_result@result$ID))
+    
     if (is.null(result_df) ||
         !all(c("ID", "geneID") %in% colnames(result_df)) ||
         nrow(result_df) < 2 ||
@@ -128,11 +133,20 @@ mod_pathway_analysis <- function(input, output, session, filtered_data_rv, res_r
       showNotification("Too few enriched terms to calculate term similarity for plots.", type = "warning")
       return()
     } else pathway_result <- tryCatch({
-      pairwise_termsim(pathway_result)
+      enrichplot::pairwise_termsim(pathway_result)
     }, error = function(e) {
-      showNotification(paste("Failed to compute term similarity:", e$message), type = "error")
-      return(NULL)
+      showNotification(paste("Failed to compute term similarity:", e$message), type = "warning")
+      return(pathway_result)  # Fall back to non-similarity version
     })
+    
+    tryCatch({
+      sim_matrix <- enrichplot::pairwise_termsim(pathway_result)
+      print("Term similarity matrix calculated successfully.")
+      print(dim(sim_matrix@termsim))
+    }, error = function(e) {
+      message("pairwise_termsim failed: ", e$message)
+    })
+    
     
     pathway_result_rv(pathway_result)
       # KEGG Term-Gene Heatmap
