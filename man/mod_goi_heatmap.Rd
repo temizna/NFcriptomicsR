@@ -7,11 +7,11 @@
 mod_goi_heatmap(input, output, session, filtered_data_rv)
 }
 \arguments{
-\item{input}{Standard Shiny module params}
+\item{input}{Shiny input object}
 
-\item{output}{Standard Shiny module params}
+\item{output}{Shiny output object}
 
-\item{session}{Standard Shiny module params}
+\item{session}{Shiny session object}
 
 \item{filtered_data_rv}{reactiveValues with norm_counts, samples, species}
 }
