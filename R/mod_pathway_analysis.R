@@ -146,107 +146,37 @@ mod_pathway_analysis <- function(input, output, session, filtered_data_rv, res_r
     }
     
     # === PAIRWISE TERM SIMILARITY ===
-    pathway_result <- tryCatch({
-      enriched <- enrichplot::pairwise_termsim(pathway_result)
-      message("✅ Term similarity matrix calculated.")
-      enriched
-    }, error = function(e) {
-      showNotification(paste("⚠️ Term similarity computation failed:", e$message), type = "warning")
-      message("pairwise_termsim failed: ", e$message)
-      return(pathway_result)  # Continue without similarity
-    })
+    # Only call if there's enough enriched terms
+    if (inherits(pathway_result, "enrichResult") &&
+        nrow(pathway_result@result) >= 2 &&
+        all(c("ID", "geneID") %in% colnames(pathway_result@result))) {
+      
+      pathway_result <- tryCatch({
+        # Use semantic data only for GO
+        if (input$pathway_db == "GO") {
+          semData <- GOSemSim::godata(OrgDb = orgdb, ont = "BP")
+          enrichplot::pairwise_termsim(pathway_result, semData = semData)
+        } else {
+          enrichplot::pairwise_termsim(pathway_result)
+        }
+      }, error = function(e) {
+        showNotification(paste("Failed to compute term similarity:", e$message), type = "warning")
+        return(pathway_result)
+      })
+    }
+    
+    if (!is.null(pathway_result@termsim)) {
+      print("Term similarity matrix dimensions:")
+      print(dim(pathway_result@termsim))
+    } else {
+      print("No termsim slot available.")
+    }
+    
+    
     
     # Store result
     pathway_result_rv(pathway_result)
-      # KEGG Term-Gene Heatmap
-  # output$keggHeatmapPlot <- renderPlot({
-  #    req(kegg_pathway_results(), geneList_rv())
-  #    selected_genes <- names(geneList_rv())
-  #    d1_merged <- d1_merged_rv()
-  #    gene_syms <- d1_merged$gene[match(selected_genes, d1_merged$ENTREZID)]
-  #    padjs <- d1_merged$padj[match(selected_genes, d1_merged$ENTREZID)]
-  #    valid_idx <- !is.na(gene_syms) & !is.na(padjs) & padjs >= 0 & padjs <= 1
-  # 
-  #    pathfindR_input <- data.frame(
-  #      Gene.symbol = gene_syms[valid_idx],
-  #      logFC = geneList_rv()[selected_genes][valid_idx],
-  #      adj.P.Val = padjs[valid_idx]
-  #    )
-  # 
-  #    pathfindR::term_gene_heatmap(
-  #      result_df = kegg_pathway_results(),
-  #      genes_df = pathfindR_input
-  #    )
-  # })
-
-  # KEGG Pathway Image Rendering
-  # output$keggPathwayImage <- renderImage({
-  #   req(kegg_pathway_results(), geneList_rv(),d1_merged_rv())
-  #   
-  #   # Get the selected genes from the reactive gene list
-  #   selected_genes <- names(geneList_rv())
-  #   d1_merged <- d1_merged_rv()
-  #   gene_syms <- d1_merged$gene[match(selected_genes, d1_merged$ENTREZID)]
-  #   padjs <- d1_merged$padj[match(selected_genes, d1_merged$ENTREZID)]
-  #   
-  #   # Check if any gene symbols are actually Ensembl IDs and need conversion
-  #   ensembl_ids <- gene_syms[grepl("^ENS", gene_syms)]  # Check for Ensembl IDs
-  #   
-  #   if (length(ensembl_ids) > 0) {
-  #     # Convert Ensembl IDs to gene symbols using the provided utility function
-  #     gene_syms_converted <- convert_ensembl_to_symbol(ensembl_ids, species = "Homo sapiens")
-  #     # Update the gene symbols with converted values
-  #     gene_syms[gene_syms %in% ensembl_ids] <- gene_syms_converted
-  #   }
-  #   
-  #   # Filter the valid genes based on padj values (ensure both gene symbol and padj are valid)
-  #   valid_idx <- !is.na(gene_syms) & !is.na(padjs) & padjs >= 0 & padjs <= 1
-  #   
-  #   # Prepare the data frame for pathfindR input
-  #   pathfindR_input <- data.frame(
-  #     Gene.symbol = gene_syms[valid_idx],
-  #     logFC = geneList_rv()[selected_genes][valid_idx],
-  #     adj.P.Val = padjs[valid_idx]
-  #   )
-  #   input_processed<-pathfindR::input_processing(
-  #     pathfindR_input,
-  #     p_val_threshold = 0.05,
-  #     pin_name_path = "Biogrid",
-  #     convert2alias = TRUE
-  #   )
-  #   # Visualize KEGG pathway terms using pathfindR's visualize_terms function
-  #   numterm=min(nrow(kegg_pathway_results()), 10)
-  #   pathway_visualization <- pathfindR::visualize_terms(kegg_pathway_results()[1:numterm,], input_processed)
-  #   
-  #   # Save the pathway visualization as a PNG image to a folder
-  #   image_output_dir <- file.path(getwd(), "kegg_pathview_outputs", "term_visualizations")
-  #   if (!dir.exists(image_output_dir)) dir.create(image_output_dir, recursive = TRUE)
-  #   
-  #   # Save the plot to the output directory (adjust filename if necessary)
-  #   output_image_path <- file.path(image_output_dir, "kegg_pathway_visualization.png")
-  #   ggsave(output_image_path, plot = pathway_visualization, width = 10, height = 8)
-  #   
-  #   # Retrieve the image file and render it in the Shiny app
-  #   image_path <- list.files(
-  #     path = image_output_dir,
-  #     pattern = "_pathfindR\\.png$",
-  #     full.names = TRUE
-  #   )
-  #   
-  #   req(length(image_path) > 0 && file.exists(image_path[1]))
-  #   
-  #   # Return the image output for rendering in Shiny
-  #   list(
-  #     src = normalizePath(image_path[1]),
-  #     contentType = "image/png",
-  #     width = "100%",
-  #     alt = "KEGG Pathway Visualization",
-  #     deleteFile = FALSE
-  #   )
-  # }, deleteFile = FALSE)
   
-
-
  output$dotPlot <- renderPlot({
     #req(pathway_result)
     enrichplot::dotplot(pathway_result) + theme(axis.text.y = element_text(size = 6, face = "bold"))
