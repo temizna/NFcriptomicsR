@@ -31,7 +31,7 @@ load_preloaded_data <- function(input, output, session, loaded_data_rv, dds_rv) 
   
   # Load the loaded_data and DESeq2 object outside the observer (only once)
   load(rda_path, envir = .GlobalEnv)
- # print(ls())  # Debugging check: check if the loaded_data was loaded successfully
+  print(ls())  # Debugging check: check if the loaded_data was loaded successfully
   
 
  # print(paste("Loaded DESeq2 object:", ls()))  # Debugging check for dds
