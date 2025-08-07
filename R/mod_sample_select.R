@@ -20,7 +20,7 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
   observe({
     req(loaded_data_rv()$samples)
     samples <- loaded_data_rv()$samples
-    print("Sample select inputs being populated...")  # Confirm execution
+    #print("Sample select inputs being populated...")  # Confirm execution
     updateSelectInput(session, "filter_sample_type", choices = unique(samples$sample_type))
     updateSelectInput(session, "filter_source", choices = unique(samples$source))
     updateSelectInput(session, "filter_EED_status", choices = unique(samples$EED_status))

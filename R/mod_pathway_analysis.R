@@ -71,83 +71,92 @@ mod_pathway_analysis <- function(input, output, session, filtered_data_rv, res_r
       return()
     }
     print("Starting Pathway Analysis")
-    if (input$pathway_db == "GO") {
-      pathway_result <- clusterProfiler::enrichGO(gene = selected_genes, OrgDb = orgdb, keyType = "ENTREZID", ont = "BP", pAdjustMethod = "BH", pvalueCutoff = input$padj_threshold,
-                                 qvalueCutoff  = input$pathway.qval,readable  = TRUE)
-    } else if (input$pathway_db == "DOSE") {
-      pathway_result <- DOSE::enrichDO(
-        gene = selected_genes,
-        ont = "DO",
-        pvalueCutoff = input$padj_threshold,
-        qvalueCutoff = input$pathway.qval,
-        readable = TRUE)
-    } else if (input$pathway_db == "KEGG") {
-      kegg_sp <- if( filtered_data$species == "Homo sapiens") "hsa" else "mmu"
-      x <- clusterProfiler::enrichKEGG(gene = selected_genes, organism = kegg_sp, pvalueCutoff = input$padj_threshold,qvalueCutoff =  input$pathway.qval)
-      pathway_result <- setReadable(x, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
-      # pathfindR_input <- data.frame(
-      # Gene.symbol = d1_merged$gene[match(selected_genes, d1_merged$ENTREZID)],
-      # logFC = geneList[selected_genes],
-      # adj.P.Val = d1_merged$padj[match(selected_genes, d1_merged$ENTREZID)]
-   # )
-    # pathfindR_input <- pathfindR_input[order(pathfindR_input$adj.P.Val), ]
-    # if (nrow(pathfindR_input) > 1000) pathfindR_input <- head(pathfindR_input, 1000)
-    # pathway_input_rv(pathfindR_input)
-    # kegg_pathway_results(pathfindR::run_pathfindR(
-    #   input = pathfindR_input,
-    #   gene_sets = "KEGG",
-    #   output_dir = file.path(getwd(), "kegg_pathview_outputs"),
-    #   plot_enrichment_chart = FALSE
-    # )) 
-    } else {
-      pathway_result <- tryCatch({
-        x <- enrichPathway(gene = selected_genes, organism = get_reactome_code(filtered_data$species), pvalueCutoff = input$padj_threshold,
-                      qvalueCutoff = input$pathway.qval, readable = TRUE)
-        # enrichPathway ends here
-        setReadable(x, OrgDb = orgdb, keyType = "ENTREZID")
-      }, error = function(e) {
-        showNotification(paste("Reactome pathway analysis failed:", e$message), type = "error")
-        return(NULL)
-      })
-    } 
-    if (!is.null(pathway_result) && nrow(pathway_result@result) > 0) {
-      pathway_result <- setReadable(pathway_result, OrgDb = orgdb, keyType = "ENTREZID")
-    } else {
-      showNotification("No enriched KEGG pathways found.", type = "warning")
-    }
-    result_df <- as.data.frame(pathway_result@result)
-    #print("Columns in result_df:")
-    #print(colnames(result_df))
-    #print("Preview of result_df:")
-    #print(head(result_df))
-    print(class(pathway_result))
-    print(slotNames(pathway_result))
-    print("Term IDs:")
-    print(head(pathway_result@result$ID))
+    # === PATHWAY ANALYSIS BASED ON DB SELECTION ===
+    pathway_result <- NULL
     
-    if (is.null(result_df) ||
-        !all(c("ID", "geneID") %in% colnames(result_df)) ||
+    tryCatch({
+      if (input$pathway_db == "GO") {
+        # GO requires semantic data available before computing similarity
+        go_data <- GOSemSim::godata('org.Hs.eg.db', ont = "BP", computeIC = FALSE)
+        pathway_result <- clusterProfiler::enrichGO(
+          gene = selected_genes,
+          OrgDb = orgdb,
+          keyType = "ENTREZID",
+          ont = "BP",
+          pAdjustMethod = "BH",
+          pvalueCutoff = input$padj_threshold,
+          qvalueCutoff = input$pathway.qval,
+          readable = TRUE
+        )
+        
+      } else if (input$pathway_db == "DOSE") {
+        pathway_result <- DOSE::enrichDO(
+          gene = selected_genes,
+          ont = "DO",
+          pvalueCutoff = input$padj_threshold,
+          qvalueCutoff = input$pathway.qval,
+          readable = TRUE
+        )
+        
+      } else if (input$pathway_db == "KEGG") {
+        kegg_sp <- if (filtered_data$species == "Homo sapiens") "hsa" else "mmu"
+        pathway_result <- clusterProfiler::enrichKEGG(
+          gene = selected_genes,
+          organism = kegg_sp,
+          pvalueCutoff = input$padj_threshold,
+          qvalueCutoff = input$pathway.qval
+        )
+        pathway_result <- setReadable(pathway_result, OrgDb = org.Hs.eg.db, keyType = "ENTREZID")
+        
+      } else {  # Reactome
+        pathway_result <- enrichPathway(
+          gene = selected_genes,
+          organism = get_reactome_code(filtered_data$species),
+          pvalueCutoff = input$padj_threshold,
+          qvalueCutoff = input$pathway.qval,
+          readable = TRUE
+        )
+        pathway_result <- setReadable(pathway_result, OrgDb = orgdb, keyType = "ENTREZID")
+      }
+    }, error = function(e) {
+      showNotification(paste("❌ Pathway enrichment failed:", e$message), type = "error")
+      return()
+    })
+    
+    # === CHECK AND PROCESS RESULTS ===
+    if (is.null(pathway_result) || nrow(pathway_result@result) == 0) {
+      showNotification("⚠️ No enriched terms found.", type = "warning")
+      return()
+    }
+    
+    result_df <- as.data.frame(pathway_result@result)
+    
+    # Diagnostics for dev/debug
+    message("Preview of pathway result:")
+    print(utils::head(result_df, 6))
+    print(str(result_df))
+    
+    if (!all(c("ID", "geneID") %in% colnames(result_df)) ||
         nrow(result_df) < 2 ||
         anyNA(result_df$ID) ||
         anyNA(result_df$geneID)) {
-      showNotification("Too few enriched terms to calculate term similarity for plots.", type = "warning")
+      showNotification("⚠️ Too few enriched terms to compute term similarity for plots.", type = "warning")
+      pathway_result_rv(pathway_result)
       return()
-    } else pathway_result <- tryCatch({
-      enrichplot::pairwise_termsim(pathway_result)
-    }, error = function(e) {
-      showNotification(paste("Failed to compute term similarity:", e$message), type = "warning")
-      return(pathway_result)  # Fall back to non-similarity version
-    })
+    }
     
-    tryCatch({
-      sim_matrix <- enrichplot::pairwise_termsim(pathway_result)
-      print("Term similarity matrix calculated successfully.")
-      print(dim(sim_matrix@termsim))
+    # === PAIRWISE TERM SIMILARITY ===
+    pathway_result <- tryCatch({
+      enriched <- enrichplot::pairwise_termsim(pathway_result)
+      message("✅ Term similarity matrix calculated.")
+      enriched
     }, error = function(e) {
+      showNotification(paste("⚠️ Term similarity computation failed:", e$message), type = "warning")
       message("pairwise_termsim failed: ", e$message)
+      return(pathway_result)  # Continue without similarity
     })
     
-    
+    # Store result
     pathway_result_rv(pathway_result)
       # KEGG Term-Gene Heatmap
   # output$keggHeatmapPlot <- renderPlot({
