@@ -17,12 +17,10 @@
 #' @importFrom shinythemes shinytheme 
 #' @export
 mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, filtered_data_rv, filtered_dds_rv) {
-  observeEvent(loaded_data_rv(), {
+  observe({
     req(loaded_data_rv()$samples)
     samples <- loaded_data_rv()$samples
-    
     print("Sample select inputs being populated...")  # Confirm execution
-    
     updateSelectInput(session, "filter_sample_type", choices = unique(samples$sample_type))
     updateSelectInput(session, "filter_source", choices = unique(samples$source))
     updateSelectInput(session, "filter_EED_status", choices = unique(samples$EED_status))
@@ -32,10 +30,11 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
     updateSelectInput(session, "filter_PRC2_status", choices = unique(samples$PRC2_status))
     updateSelectInput(session, "filter_TP53_status", choices = unique(samples$TP53_status))
     updateSelectInput(session, "sample_select", choices = rownames(samples), selected = NULL)
+    print("Loaded data reactive values:")
+    print(str(loaded_data_rv()))
+    print(colnames(samples))
   })
-  print("Loaded data reactive values:")
-  print(str(loaded_data_rv()))
-  print(colnames(samples))
+
   
 
   observeEvent(input$run_filter, {
