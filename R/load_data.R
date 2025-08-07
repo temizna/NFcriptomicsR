@@ -43,7 +43,7 @@ load_preloaded_data <- function(input, output, session, loaded_data_rv, dds_rv) 
   #dds <- get("dds", envir = .GlobalEnv)  # The DESeq2 object
   # Create DDS
  
-  dds <- DESeq2::DESeqDataSetFromMatrix(countData = raw_counts, colData = metadata, design =  ~ treatment+dimension+cellline)
+  dds <- DESeq2::DESeqDataSetFromMatrix(countData = raw_counts, colData = metadata, design =  ~ sample_type)
   dds <- DESeq2::estimateSizeFactors(dds)
   # Ensure 'dds' object is loaded correctly
   if (is.null(dds)) {
