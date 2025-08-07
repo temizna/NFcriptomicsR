@@ -41,6 +41,11 @@ load_preloaded_data <- function(input, output, session, loaded_data_rv, dds_rv) 
   metadata <- get("metadata", envir = .GlobalEnv)
   norm_data <- get("norm_data", envir = .GlobalEnv)
   #dds <- get("dds", envir = .GlobalEnv)  # The DESeq2 object
+  metadata <- as.data.frame(metadata)
+  print(head(raw_counts))
+  print(head(metadata))
+  print(head(norm_data))
+  
   # Create DDS
   cat("Row names of metadata:\n")
   print(head(rownames(metadata)))
