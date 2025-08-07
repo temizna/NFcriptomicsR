@@ -30,9 +30,13 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
     updateSelectInput(session, "filter_PRC2_status", choices = unique(samples$PRC2_status))
     updateSelectInput(session, "filter_TP53_status", choices = unique(samples$TP53_status))
     updateSelectInput(session, "sample_select", choices = rownames(samples), selected = NULL)
-    print("Loaded data reactive values:")
-    print(str(loaded_data_rv()))
-    print(colnames(samples))
+    tryCatch({
+      cat("Loaded data reactive values:\n")
+      str(loaded_data_rv())
+      print(colnames(samples))
+    }, error = function(e) {
+      message("Debug print failed: ", e$message)
+    })
   })
 
   
