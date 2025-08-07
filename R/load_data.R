@@ -31,7 +31,7 @@ load_preloaded_data <- function(input, output, session, loaded_data_rv, dds_rv) 
   
   # Load the loaded_data and DESeq2 object outside the observer (only once)
   load(rda_path, envir = .GlobalEnv)
-  print(ls())  # Debugging check: check if the loaded_data was loaded successfully
+  #print(ls())  # Debugging check: check if the loaded_data was loaded successfully
   
 
  # print(paste("Loaded DESeq2 object:", ls()))  # Debugging check for dds
@@ -42,15 +42,15 @@ load_preloaded_data <- function(input, output, session, loaded_data_rv, dds_rv) 
   norm_data <- get("norm_data", envir = .GlobalEnv)
   #dds <- get("dds", envir = .GlobalEnv)  # The DESeq2 object
   metadata <- as.data.frame(metadata)
-  print(head(raw_counts))
-  print(head(metadata))
-  print(head(norm_data))
+  #print(head(raw_counts))
+  #print(head(metadata))
+  #print(head(norm_data))
   
   # Create DDS
-  cat("Row names of metadata:\n")
-  print(head(rownames(metadata)))
-  cat("Column names of raw_counts:\n")
-  print(head(colnames(raw_counts)))
+  #cat("Row names of metadata:\n")
+  #print(head(rownames(metadata)))
+  #cat("Column names of raw_counts:\n")
+  #print(head(colnames(raw_counts)))
   
   dds <- DESeq2::DESeqDataSetFromMatrix(countData = raw_counts, colData = metadata, design =  ~ sample_type)
   dds <- DESeq2::estimateSizeFactors(dds)

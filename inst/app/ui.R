@@ -1,11 +1,11 @@
 ui <- fluidPage(
   theme = shinythemes::shinytheme("readable"),
-  titlePanel("ProgesteromicsR: An R Shiny App to Analyze Breast Cancer Cell Line RNASeq Data"),
+  titlePanel("NFcriptomicsR: An R Shiny App to Analyze NF related RNASeq Data"),
   tabsetPanel(
     tabPanel("Home",
              mainPanel(
-               h2("Welcome to ProgesteromicsR"),
-               p("This is a Shiny App for analyzing RNA-Seq data of over 200 breast cancer cell lines. It comes with preloaded data, so no need to upload anything."),
+               h2("Welcome to NFcriptomicsR"),
+               p("This is a Shiny App for analyzing RNA-Seq data of 103 NF related data including normal nerve, cell lines, MPNST, neurofibroma samples and PDX. It comes with preloaded data, so no need to upload anything."),
                p("Simply navigate through the different analysis tabs to perform tasks such as Differential Expression, Pathway Analysis, GSEA, and more."),
                p("The data is preloaded by the app itself, and the results will be displayed in respective plots and tables.")
              )
@@ -14,12 +14,14 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  actionButton("select_all", "Select All Samples"),
-                 selectInput("filter_dim", "Filter by Growth Condition", choices = NULL, multiple = TRUE),
-                 selectInput("filter_treatment", "Filter by Treatment", choices = NULL, multiple = TRUE),
-                 #selectInput("filter_batch", "Filter by Batch", choices = NULL, multiple = TRUE),
-                 selectInput("filter_cellline", "Filter by Cell Line", choices = NULL, multiple = TRUE),
-                 selectInput("filter_PR", "Filter by PR state", choices = NULL, multiple = TRUE),
-                 selectInput("filter_ER", "Filter by ER state", choices = NULL, multiple = TRUE),
+                 selectInput("filter__sample_type", "Filter by sampe type", choices = NULL, multiple = TRUE),
+                 selectInput("filter_source", "Filter by source", choices = NULL, multiple = TRUE),
+                 selectInput("filter_data_type", "Filter by data type", choices = NULL, multiple = TRUE),
+                 selectInput("filter_NF1_status", "Filter by NF1 status", choices = NULL, multiple = TRUE),
+                 selectInput("filter_SUZ12_status", "Filter by SUZ12 status", choices = NULL, multiple = TRUE),
+                 selectInput("filter_EED_status", "Filter by EED status", choices = NULL, multiple = TRUE),
+                 selectInput("filter_PRC2_status", "Filter by PRC2 status", choices = NULL, multiple = TRUE),
+                 selectInput("filter_TP53_status", "Filter by TP53 status", choices = NULL, multiple = TRUE),
                  selectInput("sample_select", "Select Individual Samples", choices = NULL, multiple = TRUE),
                  actionButton("run_filter", "FILTER!!"),
                  actionButton("deselect_all", "Deselect All Samples"),

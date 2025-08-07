@@ -1,6 +1,6 @@
 Package: NFcriptomicsR
 Title: A Comprehensive Shiny App for RNA-Seq Analysis of Neurofibroma Data
-Version: 0.7.3
+Version: 0.7.4
 Authors@R: person("Alpay", "Temiz", email = "temizna@umn.edu", role = c("aut", "cre"))
 Description: 
     NFcriptomicsR provides an interactive Shiny interface for complete RNA-Seq analysis of 

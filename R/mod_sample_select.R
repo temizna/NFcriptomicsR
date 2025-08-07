@@ -20,26 +20,30 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
   observe({
     req(loaded_data_rv()$samples)
     samples <- loaded_data_rv()$samples
-    updateSelectInput(session, "filter_dim", choices = unique(samples$dimension))
-    updateSelectInput(session, "filter_treatment", choices = unique(samples$treatment))
-   # updateSelectInput(session, "filter_batch", choices = unique(samples$batch))
-    updateSelectInput(session, "filter_cellline", choices = unique(samples$cellline))
-    updateSelectInput(session, "filter_PR", choices = unique(samples$PR))
-    updateSelectInput(session, "filter_ER", choices = unique(samples$ER))
+    updateSelectInput(session, "filter_sample_type", choices = unique(samples$sample_type))
+    updateSelectInput(session, "filter_source", choices = unique(samples$source))
+    updateSelectInput(session, "filter_EED_status", choices = unique(samples$EED_status))
+    updateSelectInput(session, "filter_data_type", choices = unique(samples$data_type))
+    updateSelectInput(session, "filter_NF1_status", choices = unique(samples$NF1_status))
+    updateSelectInput(session, "filter_SUZ12_status", choices = unique(samples$SUZ12_status))
+    updateSelectInput(session, "filter_PRC2_status", choices = unique(samples$PRC2_status))
+    updateSelectInput(session, "filter_TP53_status", choices = unique(samples$TP53_status))
     updateSelectInput(session, "sample_select", choices = rownames(samples), selected = NULL)
   })
-  
+
   observeEvent(input$run_filter, {
     req(loaded_data_rv(), dds_rv())
     filtering_data <- loaded_data_rv()
     
     filters <- list(
-      cellline = input$filter_cellline,
-      treatment = input$filter_treatment,
-      batch = input$filter_batch,
-      dimension = input$filter_dim,
-      ER = input$filter_ER,
-      PR = input$filter_PR
+      data_type = input$filter_data_type,
+      source = input$filter_source,
+      EED = input$filter_EED_status,
+      sample_type = input$filter_sample_type,
+      SUZ12 = input$filter_SUZ12_status,
+      NF1 = input$filter_NF1_status
+      PRC2 = input$filter_PRC2_status
+      TP53 = iinput_filter_TP53_status
     )
     
     for (f in names(filters)) {
@@ -69,12 +73,15 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
     samples <- loaded_data_rv()$samples
     filtered_data_rv(loaded_data_rv())
     filtered_dds_rv(dds_rv())
-    updateSelectInput(session, "filter_dim", choices = unique(samples$dimension))
-    updateSelectInput(session, "filter_treatment", choices = unique(samples$treatment))
-    updateSelectInput(session, "filter_batch", choices = unique(samples$batch))
-    updateSelectInput(session, "filter_cellline", choices = unique(samples$cellline))
-    updateSelectInput(session, "filter_PR", choices = unique(samples$PR))
-    updateSelectInput(session, "filter_ER", choices = unique(samples$ER))
+    updateSelectInput(session, "filter_sample_type", choices = unique(samples$sample_type))
+    updateSelectInput(session, "filter_source", choices = unique(samples$source))
+    updateSelectInput(session, "filter_EED_status", choices = unique(samples$EED_status))
+    updateSelectInput(session, "filter_data_type", choices = unique(samples$data_type))
+    updateSelectInput(session, "filter_NF1_status", choices = unique(samples$NF1_status))
+    updateSelectInput(session, "filter_SUZ12_status", choices = unique(samples$ER))
+    updateSelectInput(session, "filter_PRC2_status", choices = unique(samples$PRC2_status))
+    updateSelectInput(session, "filter_TP53_status", choices = unique(samples$TP53_status))
+    
     updateSelectInput(session, "sample_select", choices = rownames(samples), selected = NULL)
   })
   
