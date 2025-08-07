@@ -1,0 +1,46 @@
+Package: NFcriptomicsR
+Title: A Comprehensive Shiny App for RNA-Seq Analysis of Neurofibroma Data
+Version: 0.7.3
+Authors@R: person("Alpay", "Temiz", email = "temizna@umn.edu", role = c("aut", "cre"))
+Description: 
+    NFcriptomicsR provides an interactive Shiny interface for complete RNA-Seq analysis of 
+     Neurofibroma data, including
+     normalization, quality control, differential expression,
+    gene expression visualization, pathway analysis, and GSEA using CRAN and Bioconductor tools.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.1.0)
+Imports:
+    shiny,
+    gridExtra,
+    shinythemes,
+    ggplot2,
+    DT,
+    tidyr,
+    tidyselect,
+    BiocManager,
+    VennDiagram,
+    dplyr,
+    stringr,
+    RColorBrewer,
+    DESeq2,
+    clusterProfiler,
+    enrichplot,
+    ComplexHeatmap,
+    msigdbr,
+    ReactomePA,
+    ggrepel,
+    circlize,
+    AnnotationDbi,
+    org.Mm.eg.db,
+    org.Hs.eg.db,
+    vroom,
+    gson,
+    DOSE,
+Suggests:
+    testthat,
+    colorspace,
+Roxygen: list(markdown = TRUE)
