@@ -127,7 +127,13 @@ mod_pathway_analysis <- function(input, output, session, filtered_data_rv, res_r
         anyNA(result_df$geneID)) {
       showNotification("Too few enriched terms to calculate term similarity for plots.", type = "warning")
       return()
-    } else pathway_result <- pairwise_termsim(pathway_result) 
+    } else pathway_result <- tryCatch({
+      pairwise_termsim(pathway_result)
+    }, error = function(e) {
+      showNotification(paste("Failed to compute term similarity:", e$message), type = "error")
+      return(NULL)
+    })
+    
     pathway_result_rv(pathway_result)
       # KEGG Term-Gene Heatmap
   # output$keggHeatmapPlot <- renderPlot({
