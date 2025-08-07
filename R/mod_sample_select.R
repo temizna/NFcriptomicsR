@@ -41,8 +41,8 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
       EED = input$filter_EED_status,
       sample_type = input$filter_sample_type,
       SUZ12 = input$filter_SUZ12_status,
-      NF1 = input$filter_NF1_status
-      PRC2 = input$filter_PRC2_status
+      NF1 = input$filter_NF1_status,
+      PRC2 = input$filter_PRC2_status,
       TP53 = iinput_filter_TP53_status
     )
     
