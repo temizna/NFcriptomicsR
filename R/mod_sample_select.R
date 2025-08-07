@@ -78,7 +78,7 @@ mod_sample_select <- function(input, output, session, dds_rv, loaded_data_rv, fi
     updateSelectInput(session, "filter_EED_status", choices = unique(samples$EED_status))
     updateSelectInput(session, "filter_data_type", choices = unique(samples$data_type))
     updateSelectInput(session, "filter_NF1_status", choices = unique(samples$NF1_status))
-    updateSelectInput(session, "filter_SUZ12_status", choices = unique(samples$ER))
+    updateSelectInput(session, "filter_SUZ12_status", choices = unique(samples$SUZ12_status))
     updateSelectInput(session, "filter_PRC2_status", choices = unique(samples$PRC2_status))
     updateSelectInput(session, "filter_TP53_status", choices = unique(samples$TP53_status))
     

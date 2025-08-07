@@ -14,7 +14,7 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  actionButton("select_all", "Select All Samples"),
-                 selectInput("filter__sample_type", "Filter by sampe type", choices = NULL, multiple = TRUE),
+                 selectInput("filter_sample_type", "Filter by sampe type", choices = NULL, multiple = TRUE),
                  selectInput("filter_source", "Filter by source", choices = NULL, multiple = TRUE),
                  selectInput("filter_data_type", "Filter by data type", choices = NULL, multiple = TRUE),
                  selectInput("filter_NF1_status", "Filter by NF1 status", choices = NULL, multiple = TRUE),
