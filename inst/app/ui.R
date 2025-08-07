@@ -1,5 +1,5 @@
 ui <- fluidPage(
-  theme = shinythemes::shinytheme("readable"),
+  theme = shinythemes::shinytheme("spacelab"),
   titlePanel("NFcriptomicsR: An R Shiny App to Analyze NF related RNASeq Data"),
   tabsetPanel(
     tabPanel("Home",
