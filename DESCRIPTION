@@ -40,6 +40,13 @@ Imports:
     vroom,
     gson,
     DOSE,
+    limma,
+    BiocParallel,
+    GSEABase,
+    GSVA,
+    SummarizedExperiment,
+    scales,
+    tibble
 Suggests:
     testthat,
     colorspace,

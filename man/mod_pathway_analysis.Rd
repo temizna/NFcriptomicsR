@@ -13,7 +13,6 @@ mod_pathway_analysis(
   geneList_rv,
   kegg_pathway_results,
   d1_merged_rv,
-  pathway_input_rv,
   pathway_result_rv
 )
 }
@@ -33,8 +32,6 @@ mod_pathway_analysis(
 \item{kegg_pathway_results}{ReactiveVal for KEGG pathway analysis result}
 
 \item{d1_merged_rv}{Reactive Data frame containing gene symbols, logFC, and padj}
-
-\item{pathway_input_rv}{Reactive pathfindR input data frame}
 
 \item{pathway_result_rv}{Reactive pathway result data frame}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mod_log.R
 \name{mod_logger_server}
 \alias{mod_logger_server}
-\title{Logger Module Server}
+\title{Logger Module Server (fixed & robust)}
 \usage{
 mod_logger_server(id, input_all)
 }
@@ -15,5 +15,5 @@ mod_logger_server(id, input_all)
 A reactive expression with log entries
 }
 \description{
-Logger Module Server
+Call from your main server: \code{mod_logger_server("logger", input_all = input)}
 }
