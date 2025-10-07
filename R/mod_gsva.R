@@ -421,7 +421,11 @@ mod_gsva_server <- function(
         ggplot2::geom_boxplot(outlier.alpha = 0.25) +
         ggplot2::facet_wrap(~ Pathway, scales = "free_y", ncol = 3) +
         ggplot2::labs(x = gv, y = "GSVA score", title = "Top Differential Pathways") +
-        ggplot2::theme_minimal(base_size = 12) + ggplot2::theme(legend.position = "none")
+        ggplot2::theme_minimal(base_size = 12) + ggplot2::theme(legend.position = "none")+
+        ggplot2::theme(
+          legend.position = "none",
+          axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+        )
     })
     
     # ---- downloads (PDF/CSV)
@@ -506,7 +510,11 @@ mod_gsva_server <- function(
           ggplot2::geom_boxplot(outlier.alpha = 0.25) +
           ggplot2::facet_wrap(~ Pathway, scales = "free_y", ncol = 3) +
           ggplot2::labs(x = gv, y = "GSVA score", title = "Top Differential Pathways") +
-          ggplot2::theme_minimal(base_size = 12) + ggplot2::theme(legend.position = "none")
+          ggplot2::theme_minimal(base_size = 12) + ggplot2::theme(legend.position = "none")+
+          ggplot2::theme(
+            legend.position = "none",
+            axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
+          )
         print(p)
         grDevices::dev.off()
       }

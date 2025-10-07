@@ -179,7 +179,7 @@ mod_differential_expression <- function(input, output, session, filtered_data_rv
         metadata_column = metadata_column,
         cluster_columns = cluster_columns
       )
-      
+      ComplexHeatmap::draw(heatmap_plot)
       # Save the plot as a PDF
       dev.off()
     }

@@ -116,9 +116,8 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 # Install required Bioconductor packages
 BiocManager::install(c(
-  "DESeq2", "GEOquery", "Biobase", "clusterProfiler", "enrichplot",
-  "ComplexHeatmap", "msigdbr", "ReactomePA", "pathview",
-  "org.Hs.eg.db", "org.Mm.eg.db", "AnnotationDbi"
+  "DESeq2", "GEOquery", "Biobase", "clusterProfiler", "enrichplot","BiocParallel",
+  "ComplexHeatmap", "msigdbr", "ReactomePA", "pathview","GSEABase", "GSVA","SummerizedExperiment","limma"
 ))
 
 #install devtools if not already installed
